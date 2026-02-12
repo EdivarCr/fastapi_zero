@@ -32,7 +32,7 @@ line-length = 88
 extend-exclude = ['migrations']
 
 
-[toll.ruff.lint]
+[tool.ruff.lint]
 preview = true
 select = [
     "I", "F", "E", "W", "PL", "PT"
@@ -47,7 +47,7 @@ pythonpath = "src"
 addopts = "-p no:warnings"
 
 [tool.taskipy.tasks]
-run = "fastapi dev fastapi_zero/app.py"
+run = "fastapi dev src/fastapi_zero/app.py"
 pre_test = "task lint"
 test = "pytest -s -x --cov=fastapi_zero -vv"
 post_test = "coverage html"
