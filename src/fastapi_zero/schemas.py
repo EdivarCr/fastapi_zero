@@ -1,9 +1,11 @@
 from pydantic import BaseModel, EmailStr
 
+
 class User(BaseModel):
     username: str
-    email: EmailStr 
+    email: EmailStr
     password: str
+
 
 class Message(BaseModel):
     message: str
@@ -12,3 +14,12 @@ class Message(BaseModel):
 class UserPublic(BaseModel):
     username: str
     email: EmailStr
+    id: int
+
+
+class UserDB(User):
+    id: int
+
+
+class ListUsers(BaseModel):
+    users: list[UserPublic]

@@ -19,3 +19,12 @@ def test_creat_user_retona_ok(client):
     assert response.json() == {'id': 1, 'username': 'bob', 'email': 'bob123@gmail.com'}
 
 
+def test_read_users(client):
+    response = client.get('/Users/')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'users': [{'id': 1, 'username': 'bob', 'email': 'bob123@gmail.com'}]
+    }
+
+
