@@ -28,3 +28,29 @@ def test_read_users(client):
     }
 
 
+def test_udpate_user(client):
+    response = client.put(
+        '/Users/1',
+        json={'username': 'alice', 'email': 'alice@gmail.com', 'password': '123321'},
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'username': 'alice', 'email': 'alice@gmail.com', 'id': 1}
+
+    response = client.put(
+        '/Users/-1',
+        json={'username': 'teste', 'email': 'test@gmail.com', 'password': 'teste'},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found'}
+
+
+def test_delete_user(client):
+    response = client.delete('/Users/1')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'username': 'alice', 'email': 'alice@gmail.com', 'id': 1}
+
+    response = client.delete('/Users/-1')
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found'}
