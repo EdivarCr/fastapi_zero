@@ -86,3 +86,49 @@ def test_update_integrity_error(client, user):
     assert client_assert.json() == {
         'detail': 'Username already exists or Email already exists'
     }
+
+
+def test_creat_user_integrity_error(client, user):
+    response = client.post(
+        '/Users/',
+        json={
+            'username': user.username,
+            'email': 'outroemail@teste.com',
+            'password': 'testeteste',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Username already exists'}
+
+
+def test_creat_user_email_integrity_error(client, user):
+    response = client.post(
+        '/Users/',
+        json={
+            'username': 'alice',
+            'email': user.email,
+            'password': 'testeteste',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Email already exists'}
+
+
+def test_get_user_by_id(client, user):
+    response = client.get('/Users/1')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'username': user.username,
+        'email': user.email,
+        'id': user.id,
+    }
+
+
+def test_get_user_by_id_not_found(client, user):
+    response = client.get('/Users/999')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found by id'}
