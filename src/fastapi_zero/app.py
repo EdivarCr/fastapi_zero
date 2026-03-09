@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -8,7 +9,8 @@ from sqlalchemy.orm import Session
 from fastapi_zero.database import get_section
 
 from .models import User as UserModel
-from .schemas import ListUsers, Message, User, UserPublic
+from .schemas import ListUsers, Message, Token, User, UserPublic
+from .security import get_password_hash, verify_password, create_access_token
 
 app = FastAPI(title='FastAPI ZERO')
 
@@ -41,7 +43,10 @@ def create_user(user: User, session: Session = Depends(get_section)):
                 detail='Email already exists',
             )
 
-    db_user = UserModel(**user.model_dump())
+    db_user = UserModel(
+        **user.model_dump(exclude={'password'}),
+        password=get_password_hash(user.password),
+    )
 
     session.add(db_user)
     session.commit()
@@ -69,7 +74,7 @@ def update_user(user_id: int, user: User, session=Depends(get_section)):
     try:
         user_db.username = user.username
         user_db.email = user.email
-        user_db.password = user.password
+        user_db.password = get_password_hash(user.password)
 
         session.add(user_db)
         session.commit()
@@ -109,3 +114,31 @@ def get_user_by_id(user_id: int, session: Session = Depends(get_section)):
         )
 
     return user_db
+
+
+@app.post('/token', response_model=Token)
+def login_for_acess_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    session: Session = Depends(get_section)
+    ):
+
+    user = session.scalar(
+        select(UserModel).where(UserModel.email == form_data.username)
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Incorrect username or password',
+        )
+
+    if not verify_password(form_data.password, user.password):
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Icorrect password',
+        )
+    access_token = create_access_token(
+        {'sub': user.email}
+    )
+
+    return {'access_token': access_token, 'token_type': 'Bearer'}
