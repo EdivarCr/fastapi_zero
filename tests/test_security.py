@@ -2,14 +2,14 @@ from http import HTTPStatus
 
 from jwt import decode
 
-from fastapi_zero.security import ALGORITHM, SECRET_KEY, create_access_token
+from fastapi_zero.security import create_access_token, settings
 
 
 def test_create_access_token():
     data = {'teste': 'teste'}
     token = create_access_token(data)
 
-    decoded_token = decode(token, SECRET_KEY, algorithms=ALGORITHM)
+    decoded_token = decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
 
     assert decoded_token['teste'] == data['teste']
 
@@ -55,7 +55,7 @@ def test_subject_email(client):
 def test_decode_error(client, user, token):
     response = client.delete(
         f'/Users/{user.id}',
-        headers={'Authorization': f'Bearer {''}'},
+        headers={'Authorization': f'Bearer {""}'},
     )
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED
