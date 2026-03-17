@@ -16,7 +16,7 @@ def test_create_access_token():
     assert 'exp' in decoded_token
 
 
-def test_user_email(client):
+def test_user_email_error(client):
 
     invalid_token = create_access_token({'sub': 'emailinvalido@example.com'})
 
@@ -34,7 +34,7 @@ def test_user_email(client):
     assert response.json() == {'detail': 'Could not validate credentials'}
 
 
-def test_subject_email(client):
+def test_subject_email_error(client):
 
     invalid_token = create_access_token({'sub': ''})
 

@@ -1,13 +1,15 @@
 from contextlib import contextmanager
 from datetime import datetime
 
+import factory
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy import StaticPool, event
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from fastapi_zero.app import app
-from fastapi_zero.database import AsyncSession, create_async_engine, get_section
+from fastapi_zero.database import get_section
 from fastapi_zero.models import User, table_registry
 from fastapi_zero.security import get_password_hash
 
@@ -65,11 +67,23 @@ def mock_db_time():
 
 
 @pytest_asyncio.fixture
-async def user(session: AsyncSession):
+async def user(session):
     password = 'testeteste'
-    user = User(
-        username='bob', email='bob@teste.com', password=get_password_hash(password)
-    )
+    user = UserFactory(password=get_password_hash(password))
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    user.clean_password = password
+
+    return user
+
+
+@pytest_asyncio.fixture
+async def other_user(session):
+    password = 'testtest'
+    user = UserFactory(password=get_password_hash(password))
 
     session.add(user)
     await session.commit()
@@ -87,3 +101,12 @@ def token(client, user):
     )
 
     return response.json()['access_token']
+
+
+class UserFactory(factory.Factory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: f'test{n}')
+    email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
+    password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')

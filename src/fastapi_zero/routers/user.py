@@ -75,6 +75,7 @@ async def update_user(
         await session.refresh(current_user)
 
         return current_user
+
     except IntegrityError:
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,

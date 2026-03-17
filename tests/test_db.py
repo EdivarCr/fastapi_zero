@@ -17,9 +17,7 @@ async def test_create_user(session: AsyncSession, mock_db_time):
 
         assert user.username == 'testuser'
 
-        user_query = await session.scalar(
-            select(User).where(User.username == 'testuser')
-        )
+    user_query = await session.scalar(select(User).where(User.username == 'testuser'))
 
     assert asdict(user_query) == {
         'id': 1,

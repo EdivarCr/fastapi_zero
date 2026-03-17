@@ -96,18 +96,10 @@ def test_update_forbidden_error(client, user, token):
     assert response.json() == {'detail': 'Not enough permissions'}
 
 
-def test_delete_forbidden_error(client, token):
-    another_user = client.post(
-        '/Users/',
-        json={
-            'username': 'alice',
-            'email': 'alice@example.com',
-            'password': 'secret',
-        },
-    ).json()
+def test_delete_forbidden_error(client, other_user, token):
 
     response = client.delete(
-        f'/Users/{another_user["id"]}',
+        f'/Users/{other_user.id}',
         headers={'Authorization': f'Bearer {token}'},  # ← Token do Bob (id=1)
     )
 
@@ -118,7 +110,7 @@ def test_delete_forbidden_error(client, token):
 def test_update_integrity_error(client, user, token):
     # Inserindo fausto
     client.post(
-        '/Users',
+        '/Users/',
         json={
             'username': 'fausto',
             'email': 'fausto@example.com',
@@ -145,7 +137,7 @@ def test_update_integrity_error(client, user, token):
 
 def test_email_already_exist(client, user):
     response = client.post(
-        '/Users', json={'username': 'teste', 'email': user.email, 'password': 'senha'}
+        '/Users/', json={'username': 'teste', 'email': user.email, 'password': 'senha'}
     )
 
     assert response.status_code == HTTPStatus.CONFLICT
@@ -154,7 +146,7 @@ def test_email_already_exist(client, user):
 
 def test_name_already_exist(client, user):
     response = client.post(
-        '/Users',
+        '/Users/',
         json={
             'username': user.username,
             'email': 'testejunior@exemple.com',
