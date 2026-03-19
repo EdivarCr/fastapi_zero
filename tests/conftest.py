@@ -110,3 +110,12 @@ class UserFactory(factory.Factory):
     username = factory.Sequence(lambda n: f'test{n}')
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
     password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
+
+
+@pytest.fixture
+def other_token(client, other_user):
+    response = client.post(
+        '/auth/token',
+        data={'username': other_user.email, 'password': other_user.clean_password},
+    )
+    return response.json()['access_token']
