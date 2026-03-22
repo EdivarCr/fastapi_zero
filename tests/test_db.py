@@ -31,22 +31,25 @@ async def test_create_user(session: AsyncSession, mock_db_time):
 
 
 @pytest.mark.asyncio
-async def test_create_todo(session, user):
-    todo = Todo(
-        title='Test Todo', description='Desc Todo', state='draft', user_id=user.id
-    )
+async def test_create_todo(client, user: User, token, mock_db_time):
+    with mock_db_time(model=Todo) as time:
+        response = client.post(
+            '/todos/',
+            headers={'Authorization': f'Bearer {token}'},
+            json={
+                'title': 'Test todo',
+                'description': 'Test todo description',
+                'state': 'draft',
+            },
+        )
 
-    session.add(todo)
-    await session.commit()
-
-    todo = await session.scalar(select(Todo))
-
-    assert asdict(todo) == {
-        'description': 'Desc Todo',
+    assert response.json() == {
         'id': 1,
+        'title': 'Test todo',
+        'description': 'Test todo description',
         'state': 'draft',
-        'title': 'Test Todo',
-        'user_id': 1,
+        'created_at': time.isoformat(),
+        'updated_at': time.isoformat(),
     }
 
 

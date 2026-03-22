@@ -1,8 +1,8 @@
+import sys
 import asyncio
 
 from logging.config import fileConfig
 from sqlalchemy.ext.asyncio import async_engine_from_config
-from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
@@ -63,7 +63,7 @@ def run_migrations_offline(connection) -> None:
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=url, 
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -73,8 +73,12 @@ def run_migrations_offline(connection) -> None:
         context.run_migrations()
 
 
-def run_migrations_online(): 
+def run_migrations_online():
     asyncio.run(run_async_migrations())
+
+
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 if context.is_offline_mode():

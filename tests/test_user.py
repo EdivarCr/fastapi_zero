@@ -3,8 +3,7 @@ from http import HTTPStatus
 from fastapi_zero.schemas import UserPublic
 
 
-def test_create_user_returns_ok(client):
-
+def test_create_user_returns_ok(client, mock_db_time):
     response = client.post(
         '/Users/',
         json={
