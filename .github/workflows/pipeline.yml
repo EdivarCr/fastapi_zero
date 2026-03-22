@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: copia os arquivos do rep
         uses: actions/checkout@v4
-        
+
       - name: instalar o python
         uses: actions/setup-python@v5
         with:
@@ -22,3 +22,8 @@ jobs:
 
       - name: executar os testes
         run: poetry run task test
+    env:
+      DATABASE_URL: ${{secrets.DATABASE_URL}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
