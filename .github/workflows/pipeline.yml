@@ -1,0 +1,21 @@
+name: pipeline
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubunto-latest
+
+    steps:
+      - name: instalar o python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      
+      - name: instalar o poetry 
+        run: pipx install poetry
+
+      - name: instalar as dependencias
+        run: poetry install
+
+      - name: executar os testes
+        run: poetry run task test
