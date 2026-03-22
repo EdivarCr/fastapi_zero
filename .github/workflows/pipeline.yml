@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubunto-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: instalar o python
