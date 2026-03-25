@@ -70,7 +70,7 @@ async def delete_to_dos(id: int, session: Session, user: Current_user):
     if not todo:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Task not found')
     await session.delete(todo)
-
+    await session.commit()
     return {'message': 'Task has been deleted'}
 
 
