@@ -62,6 +62,20 @@ async def list_to_dos(todo_query: Todo_filter, session: Session, user: Current_u
 
 
 @router.delete('/{id}', response_model=Message)
+async def delete_soft_to_do(id: int, session: Session, user: Current_user):
+    todo = await session.scalar(
+        select(Todo).where(Todo.user_id == user.id, Todo.id == id)
+    )
+
+    if not todo:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Task not found')
+
+    todo.state = 'trash'
+    await session.commit()
+    return {'message': 'Task moved to trash'}
+
+
+@router.delete('/{id}/permanent', response_model=Message)
 async def delete_to_dos(id: int, session: Session, user: Current_user):
     todo = await session.scalar(
         select(Todo).where(Todo.user_id == user.id, Todo.id == id)
@@ -93,4 +107,43 @@ async def patch_to_do(
     await session.commit()
     await session.refresh(todo)
 
+    return todo
+
+
+@router.get('/todo_trash', response_model=TodoList)
+async def list_to_do_trash(
+    todo_query: Todo_filter,
+    session: Session,
+    user: Current_user,
+):
+
+    query = select(Todo).where(Todo.user_id == user.id).where(Todo.state == 'trash')
+
+    if todo_query.title:
+        query = query.filter(Todo.title.contains(todo_query.title))
+
+    if todo_query.description:
+        query = query.filter(Todo.description.contains(todo_query.description))
+
+    todos = await session.scalars(
+        query.offset(todo_query.offset).limit(todo_query.limit)
+    )
+
+    return {'todos': todos.all()}
+
+
+@router.patch('/{id}/restore', response_model=TodoPublic)
+async def restore_todo(id: int, session: Session, user: Current_user):
+    todo = await session.scalar(
+        select(Todo).where(Todo.user_id == user.id, Todo.id == id))
+
+    if not todo:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Todo not found')
+    if todo.state != 'trash':
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail='Todo is not in trash'
+        )
+    todo.state = 'todo'  # Restaura para todo
+    await session.commit()
+    await session.refresh(todo)
     return todo

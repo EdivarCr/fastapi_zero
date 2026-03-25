@@ -17,12 +17,12 @@ app = FastAPI(title='FastAPI ZERO')
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",      # Dev local
-        "https://taskflow-front-g863.onrender.com",  # Produção (ajuste para sua URL)
+        'http://localhost:5173',  # Dev local
+        'https://taskflow-front-g863.onrender.com',  # Produção (ajuste para sua URL)
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
 app.include_router(auth.router)

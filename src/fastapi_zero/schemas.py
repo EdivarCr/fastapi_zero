@@ -19,9 +19,7 @@ class UserPublic(BaseModel):
     username: str
     email: EmailStr
     id: int
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserDB(User):
