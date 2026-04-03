@@ -10,9 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.postgres import PostgresContainer
 
 from fastapi_zero.app import app
-from fastapi_zero.database import get_section
-from fastapi_zero.models import User, table_registry
-from fastapi_zero.security import get_password_hash
+from fastapi_zero.core.database import get_section
+from fastapi_zero.core.security import get_password_hash
+from fastapi_zero.model.models import User, table_registry
 
 
 @pytest.fixture(scope='session')

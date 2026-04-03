@@ -4,7 +4,7 @@ import factory
 import factory.fuzzy
 import pytest
 
-from fastapi_zero.models import Todo, TodoState
+from fastapi_zero.model.models import Todo, TodoState
 
 
 def test_create_todo(client, token, mock_db_time):
@@ -207,7 +207,7 @@ async def test_delet_to_do(token, user, session, client):
     await session.commit()
 
     response = client.delete(
-        f'/todos/{todo.id}', headers={'Authorization': f'Bearer {token}'}
+        f'/todos/{todo.id}/permanent', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.status_code == HTTPStatus.OK
@@ -216,7 +216,7 @@ async def test_delet_to_do(token, user, session, client):
 
 def test_delete_todo_error(client, token):
     response = client.delete(
-        f'/todos/{10}', headers={'Authorization': f'Bearer {token}'}
+        f'/todos/{10}/permanent', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -231,7 +231,8 @@ async def test_delete_todo_error_user(client, token, user, session, other_token)
     await session.commit()
 
     response = client.delete(
-        f'/todos/{todo.id}', headers={'Authorization': f'Bearer {other_token}'}
+        f'/todos/{todo.id}/permanent',
+        headers={'Authorization': f'Bearer {other_token}'},
     )
 
     assert response.status_code == HTTPStatus.NOT_FOUND

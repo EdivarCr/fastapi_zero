@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi_zero.routers import auth, todo, user
-from fastapi_zero.schemas import Message
+from fastapi_zero.schemas.schemas import Message
 
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())

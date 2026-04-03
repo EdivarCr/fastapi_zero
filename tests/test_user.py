@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi_zero.schemas import UserPublic
+from fastapi_zero.schemas.schemas import UserPublic
 
 
 def test_create_user_returns_ok(client, mock_db_time):

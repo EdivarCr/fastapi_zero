@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from fastapi_zero.models import TodoState
+from fastapi_zero.model.models import TodoState
 
 
 class User(BaseModel):

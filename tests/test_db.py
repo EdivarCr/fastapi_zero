@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_zero.models import Todo, User
+from fastapi_zero.model.models import Todo, User
 
 
 @pytest.mark.asyncio

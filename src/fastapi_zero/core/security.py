@@ -9,9 +9,9 @@ from pwdlib import PasswordHash
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_zero.database import get_section
-from fastapi_zero.models import User
-from fastapi_zero.settings import Settings
+from fastapi_zero.core.database import get_section
+from fastapi_zero.core.settings import Settings
+from fastapi_zero.model.models import User
 
 pwd_context = PasswordHash.recommended()
 
